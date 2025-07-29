@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>騎士修道会と托鉢修道会</title>
+    <!-- Tailwind CSS CDNを読み込み -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fontsを読み込み -->
+    <!-- M PLUS Rounded 1c (日本語向け) と Roboto (英語向け) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Google Fonts - Interを読み込み */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* 淡い背景色 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .presentation-container {
+            background-color: #ffffff; /* 白い背景 */
+            border-radius: 1.5rem; /* 角を丸く */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* 影 */
+            width: 100%;
+            max-width: 960px; /* 最大幅 */
+            min-height: 600px; /* 最小高さ */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none; /* 初期状態では非表示 */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute; /* スライドを重ねる */
+            top: 0;
+            left: 0;
+        }
+
+        .slide.active {
+            display: flex; /* アクティブなスライドを表示 */
+            opacity: 1;
+            position: relative; /* アクティブなスライドはフローに戻す */
+        }
+
+        .slide-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex; /* Flexboxを使ってコンテンツ内の要素を配置 */
+            flex-direction: column;
+            align-items: center; /* コンテンツを中央揃え */
+            justify-content: center;
+            height: 100%; /* 親要素の高さを利用 */
+        }
+
+        .slide h1 {
+            font-size: 3.5rem; /* 大きな見出し */
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            color: #1a202c; /* 濃い文字色 */
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .slide h2 {
+            font-size: 3rem; /* 中見出し */
+            font-family: 'Merriweather', serif;
+            font-weight: 600;
+            color: #1a202c; /* やや濃い文字色 */
+            margin-bottom: 1rem;
+        }
+
+        .slide p {
+            font-size: 1.7rem; /* 段落の文字サイズ */
+             font-family: 'Merriweather', serif;
+            color: #1a202c; /* 標準の文字色 */
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+        }
+
+        .slide ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 2rem;
+        }
+
+        .slide ul li {
+            font-size: 1.5rem;
+            font-family: 'Merriweather', serif;
+            color: #3399CC;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .slide ul li::before {
+            content: '•'; /* リストのマーカー */
+            color: #003366; /* 青色のマーカー */
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        /* 画像のスタイル */
+        .slide img {
+            max-width: 80%; /* 親要素の幅の80%に制限 */
+            height: auto; /* アスペクト比を維持 */
+            border-radius: 1rem; /* 角を丸く */
+            margin-top: 1.5rem; /* 上に余白 */
+            margin-bottom: 1.5rem; /* 下に余白 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* 影 */
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 1.5rem 2rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .nav-button {
+            background-color: #3182ce; /* 青色のボタン */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem; /* 角を丸く */
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none;
+            outline: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* 影 */
+        }
+
+        .nav-button:hover {
+            background-color: #2b6cb0; /* ホバー時の色 */
+            transform: translateY(-2px); /* わずかに上に移動 */
+        }
+
+        .nav-button:active {
+            transform: translateY(0); /* クリック時の効果 */
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-button:disabled {
+            background-color: #a0aec0; /* 無効時の色 */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .audio-controls {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .audio-controls label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .audio-controls input[type="range"] {
+            -webkit-appearance: none;
+            width: 150px;
+            height: 8px;
+            background: #d1d5db;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        .audio-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3182ce;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .audio-controls input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3182ce;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* レスポンシブデザイン */
+        @media (max-width: 768px) {
+            .presentation-container {
+                min-height: 500px;
+                padding: 1rem;
+            }
+            .slide {
+                padding: 1.5rem;
+            }
+            .slide h1 {
+                font-size: 2rem;
+            }
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+            .slide p, .slide ul li {
+                font-size: 1rem;
+            }
+           
+            .slide img {
+                max-width: 90%; /* 小画面では画像を少し大きく */
+            }
+            .navigation-buttons {
+                padding: 1rem;
+            }
+            .nav-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+             .audio-controls {
+                flex-direction: column;
+                gap: 5px;
+                padding: 8px 15px;
+            }
+            .audio-controls input[type="range"] {
+                width: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .presentation-container {
+                min-height: 400px;
+            }
+            .slide h1 {
+                font-size: 1.8rem;
+            }
+            .slide h2 {
+                font-size: 1.3rem;
+            }
+            .slide p, .slide ul li {
+                font-size: 0.9rem;
+            }
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            .nav-button {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- スライド1: タイトル -->
+        <div id="slide1" class="slide active">
+            <div class="slide-content">
+                <h1>剣と清貧のヨーロッパ</h1>
+                <p>中世の騎士修道会と托鉢修道会</p>
+                 <img src="https://placehold.co/600x300/e0e0e0/333333?text=十字軍の騎士" alt="十字軍の騎士のイメージ">
+            
+            </div>
+        </div>
+
+        <!-- スライド2: 騎士修道会とは -->
+        <div id="slide2" class="slide">
+            <div class="slide-content">
+                <h2>騎士修道会とは</h2>
+                <p>中世の十字軍時代に生まれた、修道士としての誓いと騎士としての軍事的役割を兼ね備えた組織です。彼らは信仰を守り、巡礼者を保護し、異教徒と戦うことを目的としました。</p>
+                <img src="https://placehold.co/500x250/d0d0d0/444444?text=騎士修道会の紋章" alt="騎士修道会の紋章のイメージ">
+                
+                <ul>
+                    <li>修道誓願と騎士道精神の融合</li>
+                    <li>軍事的・宗教的役割</li>
+                    <li>巡礼者保護と聖地防衛</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- スライド3: 主要な騎士修道会 -->
+        <div id="slide3" class="slide">
+            <div class="slide-content">
+                <h2>主要な騎士修道会</h2>
+                <ul>
+                    <li><strong>テンプル騎士団:</strong> 聖地巡礼者の保護を目的として設立され、後に強力な金融組織としても機能しました。</li>
+                    <li><strong>聖ヨハネ騎士団 (ホスピタル騎士団):</strong> 巡礼者のための病院を運営し、後に軍事的な役割も担いました。現在のマルタ騎士団につながります。</li>
+                    <li><strong>ドイツ騎士団:</strong> 東欧での布教とドイツ人入植地の拡大に貢献しました。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- スライド4: 托鉢修道会とは -->
+        <div id="slide4" class="slide">
+            <div class="slide-content">
+                <h2>托鉢修道会とは</h2>
+                <p>13世紀に興った修道会で、私有財産を持たず、施し（托鉢）によって生活し、都市の貧しい人々や庶民の間で説教や慈善活動を行いました。彼らは教会の改革運動の一環としても機能しました。</p>
+                <ul>
+                    <li>清貧の誓いと施しによる生活</li>
+                    <li>都市での活動と庶民への布教</li>
+                    <li>知的な活動と教育への貢献</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- スライド5: 主要な托鉢修道会 -->
+        <div id="slide5" class="slide">
+            <div class="slide-content">
+                <h2>主要な托鉢修道会</h2>
+                <ul>
+                    <li><strong>フランシスコ会:</strong> 聖フランチェスコによって創設され、徹底した清貧と自然への愛を重んじました。</li>
+                    <li><strong>ドミニコ会:</strong> 聖ドミニコによって創設され、異端との論争や学問・説教活動に力を入れました。</li>
+                    <li><strong>カルメル会:</strong> 隠遁生活から始まり、後に托鉢修道会となりました。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- スライド6: 比較 -->
+        <div id="slide6" class="slide">
+            <div class="slide-content">
+                <h2>騎士修道会と托鉢修道会の比較</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2 text-blue-700">騎士修道会</h3>
+                        <ul>
+                            <li>設立目的: 巡礼者保護、聖地防衛</li>
+                            <li>主な活動場所: 聖地、辺境地</li>
+                            <li>生活様式: 軍事的規律、修道誓願</li>
+                            <li>財産: 多くの領地や富を持つ</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">托鉢修道会</h3>
+                        <ul>
+                            <li>設立目的: 清貧、都市での布教、慈善活動</li>
+                            <li>主な活動場所: 都市、大学</li>
+                            <li>生活様式: 施しによる生活、清貧</li>
+                            <li>財産: 私有財産を持たない</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド7: まとめ -->
+        <div id="slide7" class="slide">
+            <div class="slide-content">
+                <h2>まとめ</h2>
+                <p>騎士修道会と托鉢修道会は、中世キリスト教社会の異なるニーズから生まれ、それぞれが独自の役割を果たしました。前者は信仰を守るための軍事的側面を、後者は清貧と都市での布教を通じて信仰を広める側面を強調しました。</p>
+                
+            </div>
+        </div>
+
+        <!-- ナビゲーションボタン -->
+        <div class="navigation-buttons">
+            <button id="prevBtn" class="nav-button" disabled>前のページ</button>
+            <button id="nextBtn" class="nav-button">次のページ</button>
+        </div>
+    </div>
+    
+     <!-- 音楽プレーヤー -->
+<div class="audio-controls">
+    <label for="volumeSlider">音楽の音量:</label>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5">
+    <audio id="bgMusic" autoplay loop>
+        <source src="sevillanotoride.mp3" type="audio/mpeg">
+        お使いのブラウザはオーディオ要素をサポートしていません。
+    </audio>
+    <!-- 音楽再生ボタンを追加 -->
+    <button id="playMusicBtn" class="nav-button ml-4">音楽を再生</button>
+</div>
+
+<script>
+    // ... 既存のJavaScriptコード ...
+
+    const playMusicBtn = document.getElementById('playMusicBtn');
+
+    playMusicBtn.addEventListener('click', () => {
+        bgMusic.play()
+            .then(() => {
+                console.log('音楽が再生されました。');
+                playMusicBtn.style.display = 'none'; // 再生後はボタンを非表示にする
+            })
+            .catch(error => {
+                console.log('音楽の再生に失敗しました:', error);
+                // ユーザーにエラーを伝えるメッセージを表示する
+            });
+    });
+
+    // 初期表示
+    updateSlideDisplay();
+
+    // ページ読み込み時に音楽を再生を試みる（ブロックされる可能性あり）
+    window.addEventListener('load', () => {
+        bgMusic.volume = volumeSlider.value; // 初期音量を設定
+        bgMusic.play().catch(error => {
+            console.log('音楽の自動再生がブロックされました:', error);
+            // 自動再生がブロックされた場合のみボタンを表示する
+            playMusicBtn.style.display = 'block'; 
+        });
+    });
+</script>
+</audio>
+        </audio>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentSlideIndex = 0;
+        
+         const bgMusic = document.getElementById('bgMusic');
+        const volumeSlider = document.getElementById('volumeSlider');
+
+        // スライドの状態を更新する関数
+        function updateSlideDisplay() {
+            slides.forEach((slide, index) => {
+                if (index === currentSlideIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // ボタンの有効/無効を切り替える
+            prevBtn.disabled = currentSlideIndex === 0;
+            nextBtn.disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        // 次のスライドへ移動
+        nextBtn.addEventListener('click', () => {
+            if (currentSlideIndex < slides.length - 1) {
+                currentSlideIndex++;
+                updateSlideDisplay();
+            }
+        });
+
+        // 前のスライドへ移動
+        prevBtn.addEventListener('click', () => {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                updateSlideDisplay();
+            }
+        });
+
+        // 初期表示
+        updateSlideDisplay();
+    </script>
+</body>
+</html>
